@@ -10,6 +10,12 @@ public sealed class ServiceRequest
     private readonly List<RequestComment> _comments = [];
     private readonly List<RequestAuditLog> _auditLogs = [];
 
+    private ServiceRequest()
+    {
+        Title = string.Empty;
+        Description = string.Empty;
+    }
+
     private ServiceRequest(
         Guid clientId,
         string title,
@@ -27,12 +33,11 @@ public sealed class ServiceRequest
         Status = RequestStatus.New;
         CreatedAtUtc = createdAtUtc;
         UpdatedAtUtc = createdAtUtc;
-        RowVersion = [];
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; private set; }
 
-    public Guid ClientId { get; }
+    public Guid ClientId { get; private set; }
 
     public string Title { get; private set; }
 
@@ -44,13 +49,13 @@ public sealed class ServiceRequest
 
     public DateTimeOffset? DueDateUtc { get; private set; }
 
-    public DateTimeOffset CreatedAtUtc { get; }
+    public DateTimeOffset CreatedAtUtc { get; private set; }
 
     public DateTimeOffset UpdatedAtUtc { get; private set; }
 
     public DateTimeOffset? ClosedAtUtc { get; private set; }
 
-    public byte[] RowVersion { get; private set; }
+    public uint RowVersion { get; private set; }
 
     public IReadOnlyCollection<RequestComment> Comments => _comments.AsReadOnly();
 

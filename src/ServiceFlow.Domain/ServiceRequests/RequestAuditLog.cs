@@ -4,6 +4,11 @@ namespace ServiceFlow.Domain.ServiceRequests;
 
 public sealed class RequestAuditLog
 {
+    private RequestAuditLog()
+    {
+        Action = string.Empty;
+    }
+
     public RequestAuditLog(
         Guid serviceRequestId,
         string action,
@@ -36,19 +41,19 @@ public sealed class RequestAuditLog
         CreatedAtUtc = createdAtUtc ?? DateTimeOffset.UtcNow;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; private set; }
 
-    public Guid ServiceRequestId { get; }
+    public Guid ServiceRequestId { get; private set; }
 
-    public string Action { get; }
+    public string Action { get; private set; }
 
-    public string? PreviousValue { get; }
+    public string? PreviousValue { get; private set; }
 
-    public string? NewValue { get; }
+    public string? NewValue { get; private set; }
 
-    public Guid CreatedByUserId { get; }
+    public Guid CreatedByUserId { get; private set; }
 
-    public DateTimeOffset CreatedAtUtc { get; }
+    public DateTimeOffset CreatedAtUtc { get; private set; }
 
     public static RequestAuditLog ForStatusChange(
         Guid serviceRequestId,

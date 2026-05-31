@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: serviceflow-postgres
+    environment:
+      POSTGRES_DB: serviceflow
+      POSTGRES_USER: serviceflow
+      POSTGRES_PASSWORD: serviceflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - serviceflow-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U serviceflow -d serviceflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  serviceflow-postgres-data:

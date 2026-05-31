@@ -4,6 +4,11 @@ namespace ServiceFlow.Domain.ServiceRequests;
 
 public sealed class RequestComment
 {
+    private RequestComment()
+    {
+        Body = string.Empty;
+    }
+
     public RequestComment(
         Guid serviceRequestId,
         Guid authorUserId,
@@ -39,15 +44,15 @@ public sealed class RequestComment
         CreatedAtUtc = createdAtUtc ?? DateTimeOffset.UtcNow;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; private set; }
 
-    public Guid ServiceRequestId { get; }
+    public Guid ServiceRequestId { get; private set; }
 
-    public Guid AuthorUserId { get; }
+    public Guid AuthorUserId { get; private set; }
 
-    public string Body { get; }
+    public string Body { get; private set; }
 
-    public CommentVisibility Visibility { get; }
+    public CommentVisibility Visibility { get; private set; }
 
-    public DateTimeOffset CreatedAtUtc { get; }
+    public DateTimeOffset CreatedAtUtc { get; private set; }
 }

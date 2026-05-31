@@ -5,6 +5,13 @@ namespace ServiceFlow.Domain.Clients;
 
 public sealed class Client
 {
+    private Client()
+    {
+        Name = string.Empty;
+        Email = string.Empty;
+        CompanyName = string.Empty;
+    }
+
     public Client(string name, string email, string companyName, DateTimeOffset? createdAtUtc = null)
     {
         var now = createdAtUtc ?? DateTimeOffset.UtcNow;
@@ -18,7 +25,7 @@ public sealed class Client
         UpdatedAtUtc = now;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; private set; }
 
     public string Name { get; private set; }
 
@@ -28,7 +35,7 @@ public sealed class Client
 
     public ClientStatus Status { get; private set; }
 
-    public DateTimeOffset CreatedAtUtc { get; }
+    public DateTimeOffset CreatedAtUtc { get; private set; }
 
     public DateTimeOffset UpdatedAtUtc { get; private set; }
 
