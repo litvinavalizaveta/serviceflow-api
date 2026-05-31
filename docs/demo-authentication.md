@@ -48,3 +48,7 @@ Public endpoints:
 - `POST /api/auth/demo-token`
 
 All client and service request endpoints require a valid demo JWT.
+
+For write actions that persist a user identifier, such as adding service request
+comments, use a GUID value in `userId` because the domain model stores user IDs
+as GUIDs.

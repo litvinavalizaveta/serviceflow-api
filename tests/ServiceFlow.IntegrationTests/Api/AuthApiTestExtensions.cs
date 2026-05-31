@@ -15,7 +15,7 @@ public static class AuthApiTestExtensions
         var response = await client.PostAsJsonAsync(
             "/api/auth/demo-token",
             new DemoTokenRequest(
-                userId ?? $"demo-{role.ToLowerInvariant()}",
+                userId ?? Guid.NewGuid().ToString(),
                 displayName ?? $"Demo {role}",
                 role),
             JsonOptions.Web);

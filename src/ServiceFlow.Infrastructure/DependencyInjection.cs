@@ -30,6 +30,8 @@ public static class DependencyInjection
         services.AddScoped<DevelopmentDataSeeder>();
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IServiceRequestService, ServiceRequestService>();
+        services.AddScoped<IServiceRequestCommentService, ServiceRequestCommentService>();
+        services.AddScoped<IServiceRequestAuditLogService, ServiceRequestAuditLogService>();
 
         return services;
     }
