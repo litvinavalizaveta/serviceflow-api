@@ -50,6 +50,18 @@ public sealed class Client
         UpdatedAtUtc = archivedAtUtc ?? DateTimeOffset.UtcNow;
     }
 
+    public void UpdateProfile(
+        string name,
+        string email,
+        string companyName,
+        DateTimeOffset? updatedAtUtc = null)
+    {
+        Name = RequireName(name);
+        Email = RequireEmail(email);
+        CompanyName = companyName?.Trim() ?? string.Empty;
+        UpdatedAtUtc = updatedAtUtc ?? DateTimeOffset.UtcNow;
+    }
+
     public void EnsureCanReceiveServiceRequest()
     {
         if (Status == ClientStatus.Archived)

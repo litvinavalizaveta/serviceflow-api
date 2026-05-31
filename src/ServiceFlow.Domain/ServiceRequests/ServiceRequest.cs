@@ -117,6 +117,23 @@ public sealed class ServiceRequest
         return auditLog;
     }
 
+    public void UpdateDetails(
+        string title,
+        string description,
+        DateTimeOffset? dueDateUtc,
+        DateTimeOffset? updatedAtUtc = null)
+    {
+        var now = updatedAtUtc ?? DateTimeOffset.UtcNow;
+
+        EnsureValidDueDate(dueDateUtc, now);
+        EnsurePriorityMatchesDueDate(Priority, dueDateUtc);
+
+        Title = RequireTitle(title);
+        Description = NormalizeDescription(description);
+        DueDateUtc = dueDateUtc;
+        UpdatedAtUtc = now;
+    }
+
     public RequestAuditLog? ChangePriority(
         RequestPriority newPriority,
         Guid changedByUserId,

@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ServiceFlow.Application.Clients;
+using ServiceFlow.Application.ServiceRequests;
+using ServiceFlow.Infrastructure.ApplicationServices.Clients;
+using ServiceFlow.Infrastructure.ApplicationServices.ServiceRequests;
 using ServiceFlow.Infrastructure.Persistence;
 using ServiceFlow.Infrastructure.Persistence.Seed;
 
@@ -24,6 +28,8 @@ public static class DependencyInjection
                 npgsql.MigrationsAssembly(typeof(ServiceFlowDbContext).Assembly.FullName)));
 
         services.AddScoped<DevelopmentDataSeeder>();
+        services.AddScoped<IClientService, ClientService>();
+        services.AddScoped<IServiceRequestService, ServiceRequestService>();
 
         return services;
     }
