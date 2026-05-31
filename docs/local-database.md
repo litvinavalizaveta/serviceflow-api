@@ -2,7 +2,7 @@
 
 ServiceFlow uses PostgreSQL for local persistence.
 
-## Start PostgreSQL
+## Start PostgreSQL Only
 
 ```bash
 docker compose up -d postgres
@@ -53,3 +53,30 @@ The seeder runs migrations first, then inserts realistic demo clients, service r
 ```
 
 Persistence integration tests use Testcontainers and require Docker to be running.
+
+## Run API And PostgreSQL With Docker Compose
+
+The full local stack starts PostgreSQL and the API:
+
+```bash
+docker compose up --build
+```
+
+The API listens on:
+
+```text
+http://localhost:8080
+```
+
+Swagger is available at:
+
+```text
+http://localhost:8080/swagger
+```
+
+Docker Compose uses development-only credentials by default and connects the API
+to PostgreSQL through the internal Docker host name `postgres`.
+
+In `Development`, setting `SeedData__RunOnStartup=true` runs migrations and then
+adds demo data if the database is empty. The Compose setup enables this by
+default so a fresh local stack is immediately usable.

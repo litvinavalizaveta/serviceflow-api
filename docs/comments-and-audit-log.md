@@ -13,7 +13,7 @@ POST /api/service-requests/{id}/comments
 Add a comment:
 
 ```bash
-curl -X POST http://localhost:5000/api/service-requests/{id}/comments \
+curl -X POST http://localhost:8080/api/service-requests/{id}/comments \
   -H "Authorization: Bearer <accessToken>" \
   -H "Content-Type: application/json" \
   -d '{"body":"Checked the customer import logs.","visibility":"Internal"}'

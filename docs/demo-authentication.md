@@ -13,7 +13,7 @@ external providers, or a user database.
 ## Get a Demo Token
 
 ```bash
-curl -X POST http://localhost:5000/api/auth/demo-token \
+curl -X POST http://localhost:8080/api/auth/demo-token \
   -H "Content-Type: application/json" \
   -d '{"userId":"demo-admin","displayName":"Demo Admin","role":"Admin"}'
 ```
@@ -31,7 +31,7 @@ The response contains a bearer token:
 Use it with API requests:
 
 ```bash
-curl http://localhost:5000/api/clients \
+curl http://localhost:8080/api/clients \
   -H "Authorization: Bearer <accessToken>"
 ```
 
