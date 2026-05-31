@@ -3,18 +3,34 @@ services:
     image: postgres:16-alpine
     container_name: serviceflow-postgres
     environment:
-      POSTGRES_DB: serviceflow
-      POSTGRES_USER: serviceflow
-      POSTGRES_PASSWORD: serviceflow
+      POSTGRES_DB: ${POSTGRES_DB:-serviceflow}
+      POSTGRES_USER: ${POSTGRES_USER:-serviceflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-serviceflow}
     ports:
       - "5432:5432"
     volumes:
       - serviceflow-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U serviceflow -d serviceflow"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: src/ServiceFlow.Api/Dockerfile
+    container_name: serviceflow-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__ServiceFlowDb: Host=postgres;Port=5432;Database=${POSTGRES_DB:-serviceflow};Username=${POSTGRES_USER:-serviceflow};Password=${POSTGRES_PASSWORD:-serviceflow}
+      SeedData__RunOnStartup: ${SEED_DATA_RUN_ON_STARTUP:-true}
+    ports:
+      - "${SERVICEFLOW_HTTP_PORT:-8080}:8080"
 
 volumes:
   serviceflow-postgres-data:
