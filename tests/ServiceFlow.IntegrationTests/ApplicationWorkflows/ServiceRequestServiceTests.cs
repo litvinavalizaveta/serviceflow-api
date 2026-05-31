@@ -3,6 +3,7 @@ using ServiceFlow.Application.Clients;
 using ServiceFlow.Application.Common;
 using ServiceFlow.Application.ServiceRequests;
 using ServiceFlow.Domain.Clients;
+using ServiceFlow.Domain.Common;
 using ServiceFlow.Domain.ServiceRequests;
 using ServiceFlow.Infrastructure.ApplicationServices.Clients;
 using ServiceFlow.Infrastructure.ApplicationServices.ServiceRequests;
@@ -55,7 +56,7 @@ public sealed class ServiceRequestServiceTests : IClassFixture<PostgreSqlPersist
 
         var service = new ServiceRequestService(dbContext);
 
-        var exception = await Assert.ThrowsAsync<ForbiddenOperationException>(() =>
+        var exception = await Assert.ThrowsAsync<DomainException>(() =>
             service.CreateServiceRequestAsync(
                 new CreateServiceRequestCommand(
                     client.Id,

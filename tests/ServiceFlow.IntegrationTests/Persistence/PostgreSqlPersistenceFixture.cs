@@ -13,6 +13,10 @@ public sealed class PostgreSqlPersistenceFixture : IAsyncLifetime
 
     public string? SkipReason { get; private set; }
 
+    public string ConnectionString =>
+        _container?.GetConnectionString()
+        ?? throw new InvalidOperationException(SkipReason ?? "PostgreSQL test container is not available.");
+
     public async Task InitializeAsync()
     {
         try
@@ -52,7 +56,7 @@ public sealed class PostgreSqlPersistenceFixture : IAsyncLifetime
         }
 
         var options = new DbContextOptionsBuilder<ServiceFlowDbContext>()
-            .UseNpgsql(_container.GetConnectionString())
+            .UseNpgsql(ConnectionString)
             .Options;
 
         return new ServiceFlowDbContext(options);

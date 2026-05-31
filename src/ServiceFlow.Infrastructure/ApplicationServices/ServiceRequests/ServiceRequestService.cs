@@ -90,24 +90,17 @@ public sealed class ServiceRequestService : IServiceRequestService
             throw new NotFoundException(nameof(Client), command.ClientId);
         }
 
-        try
-        {
-            var serviceRequest = ServiceRequest.CreateForClient(
-                client,
-                command.Title,
-                command.Description,
-                command.Priority,
-                command.DueDateUtc);
+        var serviceRequest = ServiceRequest.CreateForClient(
+            client,
+            command.Title,
+            command.Description,
+            command.Priority,
+            command.DueDateUtc);
 
-            _dbContext.ServiceRequests.Add(serviceRequest);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+        _dbContext.ServiceRequests.Add(serviceRequest);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return ToDto(serviceRequest, client);
-        }
-        catch (DomainException ex)
-        {
-            throw new ForbiddenOperationException(ex.Message);
-        }
+        return ToDto(serviceRequest, client);
     }
 
     public async Task<ServiceRequestDto> UpdateServiceRequestAsync(
@@ -122,18 +115,11 @@ public sealed class ServiceRequestService : IServiceRequestService
             throw new ForbiddenOperationException("Closed service requests cannot be updated.");
         }
 
-        try
-        {
-            serviceRequest.UpdateDetails(command.Title, command.Description, command.DueDateUtc);
-            serviceRequest.ChangePriority(command.Priority, command.UpdatedByUserId);
+        serviceRequest.UpdateDetails(command.Title, command.Description, command.DueDateUtc);
+        serviceRequest.ChangePriority(command.Priority, command.UpdatedByUserId);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return await GetServiceRequestByIdAsync(id, cancellationToken);
-        }
-        catch (DomainException ex)
-        {
-            throw new ForbiddenOperationException(ex.Message);
-        }
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return await GetServiceRequestByIdAsync(id, cancellationToken);
     }
 
     public async Task<ServiceRequestDto> ChangeStatusAsync(
@@ -143,17 +129,10 @@ public sealed class ServiceRequestService : IServiceRequestService
     {
         var serviceRequest = await FindServiceRequestAsync(id, cancellationToken);
 
-        try
-        {
-            serviceRequest.ChangeStatus(command.Status, command.ChangedByUserId);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+        serviceRequest.ChangeStatus(command.Status, command.ChangedByUserId);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return await GetServiceRequestByIdAsync(id, cancellationToken);
-        }
-        catch (DomainException ex)
-        {
-            throw new ForbiddenOperationException(ex.Message);
-        }
+        return await GetServiceRequestByIdAsync(id, cancellationToken);
     }
 
     public async Task<ServiceRequestDto> CloseAsync(
@@ -163,22 +142,15 @@ public sealed class ServiceRequestService : IServiceRequestService
     {
         if (!Guid.TryParse(closedByUserId, out var userId))
         {
-            throw new ForbiddenOperationException("Closed by user id must be a valid GUID.");
+            throw new DomainException("Closed by user id must be a valid GUID.");
         }
 
         var serviceRequest = await FindServiceRequestAsync(id, cancellationToken);
 
-        try
-        {
-            serviceRequest.Close(userId);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+        serviceRequest.Close(userId);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return await GetServiceRequestByIdAsync(id, cancellationToken);
-        }
-        catch (DomainException ex)
-        {
-            throw new ForbiddenOperationException(ex.Message);
-        }
+        return await GetServiceRequestByIdAsync(id, cancellationToken);
     }
 
     private static IQueryable<ServiceRequest> ApplyFilters(
