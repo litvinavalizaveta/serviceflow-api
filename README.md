@@ -1,6 +1,6 @@
 # ServiceFlow API
 
-ServiceFlow is a portfolio backend project demonstrating production-style ASP.NET Core API development for a small service operations workflow.
+ServiceFlow is a backend project demonstrating production-style ASP.NET Core API development for a small service operations workflow.
 
 ## Overview
 
