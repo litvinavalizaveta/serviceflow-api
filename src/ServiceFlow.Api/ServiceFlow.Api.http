@@ -1,0 +1,6 @@
+@ServiceFlow.Api_HostAddress = http://localhost:5234
+
+GET {{ServiceFlow.Api_HostAddress}}/health/
+Accept: application/json
+
+###
