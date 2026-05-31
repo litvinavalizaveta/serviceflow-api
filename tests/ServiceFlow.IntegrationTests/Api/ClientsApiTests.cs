@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using ServiceFlow.Api.Contracts.Clients;
+using ServiceFlow.Api.Security;
 using ServiceFlow.Application.Clients;
 using ServiceFlow.Application.Common;
 using ServiceFlow.Domain.Clients;
@@ -22,6 +23,7 @@ public sealed class ClientsApiTests : IClassFixture<PostgreSqlPersistenceFixture
     public async Task GetClients_ReturnsPaginatedClients()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdClient = await CreateClientAsync(client, UniqueEmail("list-client"));
 
         var response = await client.GetAsync($"/api/clients?search={createdClient.Email}&page=1&pageSize=10");
@@ -41,6 +43,7 @@ public sealed class ClientsApiTests : IClassFixture<PostgreSqlPersistenceFixture
     public async Task PostClient_CreatesClientAndReturnsCreated()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var email = UniqueEmail("post-client");
 
         var response = await client.PostAsJsonAsync(
@@ -62,6 +65,7 @@ public sealed class ClientsApiTests : IClassFixture<PostgreSqlPersistenceFixture
     public async Task GetClient_ReturnsCreatedClient()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdClient = await CreateClientAsync(client, UniqueEmail("get-client"));
 
         var response = await client.GetAsync($"/api/clients/{createdClient.Id}");
@@ -79,6 +83,7 @@ public sealed class ClientsApiTests : IClassFixture<PostgreSqlPersistenceFixture
     public async Task GetClient_MissingClient_ReturnsProblemDetails()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
 
         var response = await client.GetAsync($"/api/clients/{Guid.NewGuid()}");
 
@@ -96,6 +101,7 @@ public sealed class ClientsApiTests : IClassFixture<PostgreSqlPersistenceFixture
     public async Task PostClient_InvalidClient_ReturnsValidationProblemDetails()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
 
         var response = await client.PostAsJsonAsync(
             "/api/clients",
@@ -116,6 +122,7 @@ public sealed class ClientsApiTests : IClassFixture<PostgreSqlPersistenceFixture
     public async Task ArchiveClient_ReturnsNoContent()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdClient = await CreateClientAsync(client, UniqueEmail("archive-client"));
 
         var response = await client.PostAsync($"/api/clients/{createdClient.Id}/archive", content: null);

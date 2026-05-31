@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceFlow.Api.Contracts.ServiceRequests;
+using ServiceFlow.Api.Security;
 using ServiceFlow.Application.Common;
 using ServiceFlow.Application.ServiceRequests;
 using ServiceFlow.Domain.ServiceRequests;
@@ -18,6 +20,7 @@ public sealed class ServiceRequestsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = ServiceFlowPolicies.CanReadServiceRequests)]
     [ProducesResponseType<PagedResult<ServiceRequestDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedResult<ServiceRequestDto>>> GetServiceRequests(
         [FromQuery] int page = PageRequest.DefaultPage,
@@ -43,6 +46,7 @@ public sealed class ServiceRequestsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = ServiceFlowPolicies.CanReadServiceRequests)]
     [ProducesResponseType<ServiceRequestDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ServiceRequestDto>> GetServiceRequest(
@@ -53,6 +57,7 @@ public sealed class ServiceRequestsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = ServiceFlowPolicies.CanManageServiceRequests)]
     [ProducesResponseType<ServiceRequestDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ServiceRequestDto>> CreateServiceRequest(
@@ -72,6 +77,7 @@ public sealed class ServiceRequestsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = ServiceFlowPolicies.CanManageServiceRequests)]
     [ProducesResponseType<ServiceRequestDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
@@ -94,6 +100,7 @@ public sealed class ServiceRequestsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/status")]
+    [Authorize(Policy = ServiceFlowPolicies.CanManageServiceRequests)]
     [ProducesResponseType<ServiceRequestDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
@@ -111,6 +118,7 @@ public sealed class ServiceRequestsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/close")]
+    [Authorize(Policy = ServiceFlowPolicies.CanManageServiceRequests)]
     [ProducesResponseType<ServiceRequestDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]

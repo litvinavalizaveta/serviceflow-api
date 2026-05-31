@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using ServiceFlow.Api.Contracts.Clients;
 using ServiceFlow.Api.Contracts.ServiceRequests;
+using ServiceFlow.Api.Security;
 using ServiceFlow.Application.Clients;
 using ServiceFlow.Application.Common;
 using ServiceFlow.Application.ServiceRequests;
@@ -26,6 +27,7 @@ public sealed class ServiceRequestsApiTests : IClassFixture<PostgreSqlPersistenc
     public async Task GetServiceRequests_ReturnsPaginatedRequests()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdRequest = await CreateServiceRequestAsync(client, RequestPriority.Medium);
 
         var response = await client.GetAsync($"/api/service-requests?clientId={createdRequest.ClientId}&page=1&pageSize=10");
@@ -44,6 +46,7 @@ public sealed class ServiceRequestsApiTests : IClassFixture<PostgreSqlPersistenc
     public async Task PostServiceRequest_CreatesRequestAndReturnsCreated()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdClient = await CreateClientAsync(client);
 
         var response = await client.PostAsJsonAsync(
@@ -70,6 +73,7 @@ public sealed class ServiceRequestsApiTests : IClassFixture<PostgreSqlPersistenc
     public async Task PostServiceRequest_ForArchivedClient_ReturnsProblemDetails()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdClient = await CreateClientAsync(client);
         var archiveResponse = await client.PostAsync($"/api/clients/{createdClient.Id}/archive", content: null);
         archiveResponse.EnsureSuccessStatusCode();
@@ -97,6 +101,7 @@ public sealed class ServiceRequestsApiTests : IClassFixture<PostgreSqlPersistenc
     public async Task GetServiceRequest_MissingRequest_ReturnsProblemDetails()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
 
         var response = await client.GetAsync($"/api/service-requests/{Guid.NewGuid()}");
 
@@ -112,6 +117,7 @@ public sealed class ServiceRequestsApiTests : IClassFixture<PostgreSqlPersistenc
     public async Task ChangeStatus_UpdatesStatus()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdRequest = await CreateServiceRequestAsync(client, RequestPriority.High);
 
         var response = await client.PostAsJsonAsync(
@@ -131,6 +137,7 @@ public sealed class ServiceRequestsApiTests : IClassFixture<PostgreSqlPersistenc
     public async Task ChangeStatus_InvalidTransition_ReturnsProblemDetails()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdRequest = await CreateServiceRequestAsync(client, RequestPriority.Medium);
         var closeResponse = await client.PostAsJsonAsync(
             $"/api/service-requests/{createdRequest.Id}/close",
@@ -155,6 +162,7 @@ public sealed class ServiceRequestsApiTests : IClassFixture<PostgreSqlPersistenc
     public async Task GetServiceRequests_CanFilterByStatus()
     {
         using var client = ApiTestClientFactory.CreateClient(_fixture);
+        await client.AuthenticateAsAsync(ServiceFlowRoles.Admin);
         var createdRequest = await CreateServiceRequestAsync(client, RequestPriority.High);
         var statusResponse = await client.PostAsJsonAsync(
             $"/api/service-requests/{createdRequest.Id}/status",

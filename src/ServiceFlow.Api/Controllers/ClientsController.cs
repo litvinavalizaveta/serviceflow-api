@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceFlow.Api.Contracts.Clients;
+using ServiceFlow.Api.Security;
 using ServiceFlow.Application.Clients;
 using ServiceFlow.Application.Common;
 using ServiceFlow.Domain.Clients;
@@ -18,6 +20,7 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = ServiceFlowPolicies.CanReadClients)]
     [ProducesResponseType<PagedResult<ClientDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedResult<ClientDto>>> GetClients(
         [FromQuery] int page = PageRequest.DefaultPage,
@@ -34,6 +37,7 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = ServiceFlowPolicies.CanReadClients)]
     [ProducesResponseType<ClientDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ClientDto>> GetClient(
@@ -44,6 +48,7 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = ServiceFlowPolicies.CanManageClients)]
     [ProducesResponseType<ClientDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ClientDto>> CreateClient(
@@ -58,6 +63,7 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = ServiceFlowPolicies.CanManageClients)]
     [ProducesResponseType<ClientDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
@@ -75,6 +81,7 @@ public sealed class ClientsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/archive")]
+    [Authorize(Policy = ServiceFlowPolicies.CanManageClients)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ArchiveClient(
